@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { assetPath } from '../../lib/assetPath';
 
 export function AudioPlayer() {
   // Default sound: ON
@@ -77,7 +78,7 @@ export function AudioPlayer() {
     >
       <audio
         ref={audioRef}
-        src="/assets/interstellar.mp3"
+        src={assetPath('assets/interstellar.mp3')}
         preload="auto"
         loop
       />

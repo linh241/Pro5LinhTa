@@ -6,6 +6,7 @@ import Lenis from 'lenis';
 
 import { WordReveal } from './components/WordReveal/WordReveal';
 import { Bubble } from './components/canvasui/Bubble';
+import { assetPath } from './lib/assetPath';
 import './css/styles.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -298,7 +299,7 @@ function App() {
                 {/* PROJECT 01: HIVO */}
                 <article className="project-item" id="project-hivo">
                   <div className="project-media-wrapper aspect-16-9" id="hivoMediaWrapper">
-                    <img src="/assets/portfolio/hivo-cover.jpg" alt="HIVO Digital Asset Management Interface" className="project-real-img" loading="eager" />
+                    <img src={assetPath('assets/portfolio/hivo-cover.jpg')} alt="HIVO Digital Asset Management Interface" className="project-real-img" loading="eager" />
                   </div>
                   <div className="project-meta-row">
                     <div className="project-title-group">
@@ -318,7 +319,7 @@ function App() {
                 {/* PROJECT 02: UNSWER */}
                 <article className="project-item" id="project-unswer">
                   <div className="project-media-wrapper aspect-16-9">
-                    <img src="/assets/portfolio/unswer-cover.jpg" alt="Unswer Visual AI Research Workspace" className="project-real-img" loading="lazy" />
+                    <img src={assetPath('assets/portfolio/unswer-cover.jpg')} alt="Unswer Visual AI Research Workspace" className="project-real-img" loading="lazy" />
                   </div>
                   <div className="project-meta-row">
                     <div className="project-title-group">
@@ -338,7 +339,7 @@ function App() {
                 {/* PROJECT 03: LUATVIETNAM */}
                 <article className="project-item" id="project-luatvietnam">
                   <div className="project-media-wrapper aspect-16-9">
-                    <img src="/assets/portfolio/luatvietnam-cover.jpg" alt="LuatVietnam Legal Information Architecture" className="project-real-img" loading="lazy" />
+                    <img src={assetPath('assets/portfolio/luatvietnam-cover.jpg')} alt="LuatVietnam Legal Information Architecture" className="project-real-img" loading="lazy" />
                   </div>
                   <div className="project-meta-row">
                     <div className="project-title-group">
@@ -358,7 +359,7 @@ function App() {
                 {/* PROJECT 04: WORKLAB */}
                 <article className="project-item" id="project-worklab">
                   <div className="project-media-wrapper aspect-3-2">
-                    <img src="/assets/portfolio/worklab-cover.jpg" alt="Worklab Collaborative Platform" className="project-real-img" loading="lazy" />
+                    <img src={assetPath('assets/portfolio/worklab-cover.jpg')} alt="Worklab Collaborative Platform" className="project-real-img" loading="lazy" />
                   </div>
                   <div className="project-meta-row">
                     <div className="project-title-group">

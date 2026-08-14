@@ -7,6 +7,7 @@ import { Cloth } from './components/canvasui/Cloth';
 import { AudioPlayer } from './components/AudioPlayer/AudioPlayer';
 import { DitheredObject } from './components/canvasui/DitheredObject';
 import type { DitheredObjectOptions } from './components/canvasui/DitheredObject';
+import { assetPath } from './lib/assetPath';
 import './css/styles.css';
 
 gsap.registerPlugin(Observer, useGSAP);
@@ -25,7 +26,7 @@ function AppClone() {
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
 
   const [ditherOptions] = useState<Required<DitheredObjectOptions>>({
-    src: '/the_hand.glb',
+    src: assetPath('the_hand.glb'),
     method: 'halftone',
     gridSize: 1,
     pixelSizeRatio: 1,
@@ -261,7 +262,7 @@ function AppClone() {
           aria-label="Linh Ta — Home"
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}
         >
-          <img src="/logo.svg?v=2" alt="Linh Ta Logo" style={{ height: '24px', width: 'auto', display: 'block' }} />
+          <img src={assetPath('logo.svg?v=2')} alt="Linh Ta Logo" style={{ height: '24px', width: 'auto', display: 'block' }} />
         </button>
 
         {/* Far-right Vertical Nav Menu */}
@@ -323,7 +324,7 @@ function AppClone() {
                       <span aria-hidden="true">↓</span>
                     </button>
                     <a
-                      href="/Linh_Ta_Resume_2026.pdf"
+                      href={assetPath('Linh_Ta_Resume_2026.pdf')}
                       download="Linh_Ta_Resume_2026.pdf"
                       className="hero-scroll-btn"
                       style={{ textDecoration: 'none', cursor: 'pointer' }}
@@ -377,7 +378,7 @@ function AppClone() {
                 <div className="h-project-fullscreen">
                   <div className="h-project-img-col">
                     <div className="h-project-img">
-                      <img src="/assets/portfolio/HIVO-cover.png" alt="HIVO Digital Asset Management" loading="eager" />
+                      <img src={assetPath('assets/portfolio/HIVO-cover.png')} alt="HIVO Digital Asset Management" loading="eager" />
                     </div>
                   </div>
                   <div className="h-project-meta">
@@ -400,7 +401,7 @@ function AppClone() {
                 <div className="h-project-fullscreen">
                   <div className="h-project-img-col">
                     <div className="h-project-img">
-                      <img src="/assets/portfolio/Unswer-cover.png" alt="Unswer AI Research Workspace" loading="lazy" />
+                      <img src={assetPath('assets/portfolio/Unswer-cover.png')} alt="Unswer AI Research Workspace" loading="lazy" />
                     </div>
                   </div>
                   <div className="h-project-meta">
@@ -423,7 +424,7 @@ function AppClone() {
                 <div className="h-project-fullscreen">
                   <div className="h-project-img-col">
                     <div className="h-project-img">
-                      <img src="/assets/portfolio/Luatvietnam-cover.png" alt="LuatVietnam Legal Information Architecture" loading="lazy" />
+                      <img src={assetPath('assets/portfolio/Luatvietnam-cover.png')} alt="LuatVietnam Legal Information Architecture" loading="lazy" />
                     </div>
                   </div>
                   <div className="h-project-meta">
@@ -446,7 +447,7 @@ function AppClone() {
                 <div className="h-project-fullscreen">
                   <div className="h-project-img-col">
                     <div className="h-project-img">
-                      <img src="/assets/portfolio/Worklab-cover.png" alt="Worklab Collaborative Platform" loading="lazy" />
+                      <img src={assetPath('assets/portfolio/Worklab-cover.png')} alt="Worklab Collaborative Platform" loading="lazy" />
                     </div>
                   </div>
                   <div className="h-project-meta">
@@ -622,7 +623,7 @@ function AppClone() {
 
                   <div className="about-portrait-card line-reveal">
                     <img
-                      src="/assets/linh-ta-portrait.jpg"
+                      src={assetPath('assets/linh-ta-portrait.jpg')}
                       alt="Linh Ta — Product Designer &amp; Founder"
                       className="about-portrait-img"
                       loading="lazy"
@@ -663,7 +664,7 @@ function AppClone() {
                     <span>tunglinhlinhtinh50@gmail.com</span>
                     <span className="contact-arrow-icon" aria-hidden="true">→</span>
                   </a>
-                  <a href="/Linh_Ta_Resume_2026.pdf" download="Linh_Ta_Resume_2026.pdf" className="contact-link-entry line-reveal">
+                  <a href={assetPath('Linh_Ta_Resume_2026.pdf')} download="Linh_Ta_Resume_2026.pdf" className="contact-link-entry line-reveal">
                     <span className="contact-type-label">RESUME / CV</span>
                     <span>Download CV (PDF)</span>
                     <span className="contact-arrow-icon" aria-hidden="true">↓</span>

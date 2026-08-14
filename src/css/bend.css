@@ -1,0 +1,142 @@
+/* ==========================================================================
+   CANVAS UI: BEND — FULL 3D FOLD STYLESHEET
+   Matches Canvas UI Bend (@canvas-ui/bend-react) layout and perspective.
+   ========================================================================== */
+
+/* Base reset for full-page fixed Bend container */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Outer 3D perspective wrapper */
+.bend-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    perspective: 700px;
+    perspective-origin: 50% 50%;
+    transform-style: preserve-3d;
+    background-color: var(--bg-main, #FAF9F6);
+    z-index: 1;
+}
+
+/* Scrollable Content Viewport */
+.bend-content-viewport {
+    position: relative;
+    width: 100%;
+}
+
+/* Target item hardware acceleration & 3D styling */
+.bend-target-item {
+    backface-visibility: hidden;
+    will-change: transform, opacity;
+    transform-style: preserve-3d;
+}
+
+/* Fold Zone Shadow Overlays */
+.bend-fold-zone {
+    position: absolute;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0;
+    will-change: opacity;
+    backface-visibility: hidden;
+}
+
+.bend-fold-zone--top {
+    top: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(250, 249, 246, 0.95) 0%,
+        rgba(250, 249, 246, 0.6) 40%,
+        rgba(250, 249, 246, 0) 100%
+    );
+}
+
+.bend-fold-zone--bottom {
+    bottom: 0;
+    background: linear-gradient(
+        to top,
+        rgba(250, 249, 246, 0.95) 0%,
+        rgba(250, 249, 246, 0.6) 40%,
+        rgba(250, 249, 246, 0) 100%
+    );
+}
+
+/* Fold Crease Depth Line */
+.bend-crease {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    pointer-events: none;
+    z-index: 51;
+    opacity: 0;
+    background: linear-gradient(
+        to right,
+        transparent 3%,
+        rgba(0, 0, 0, 0.08) 20%,
+        rgba(0, 0, 0, 0.15) 50%,
+        rgba(0, 0, 0, 0.08) 80%,
+        transparent 97%
+    );
+    box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.04);
+}
+
+/* Custom Scrollbar */
+[data-canvasui-content]::-webkit-scrollbar {
+    width: 6px;
+}
+
+[data-canvasui-content]::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+[data-canvasui-content]::-webkit-scrollbar-thumb {
+    background: rgba(18, 19, 20, 0.15);
+    border-radius: 3px;
+}
+
+[data-canvasui-content]::-webkit-scrollbar-thumb:hover {
+    background: rgba(18, 19, 20, 0.3);
+}
+
+[data-canvasui-content] {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(18, 19, 20, 0.15) transparent;
+}
+
+/* Reduced Motion Fallback */
+@media (prefers-reduced-motion: reduce) {
+    html, body {
+        overflow: auto;
+    }
+    .bend-wrapper {
+        position: relative;
+        height: auto;
+        overflow: visible;
+        perspective: none;
+    }
+    .bend-content-viewport {
+        overflow: visible;
+    }
+    .bend-target-item {
+        transform: none !important;
+        opacity: 1 !important;
+    }
+    .bend-fold-zone,
+    .bend-crease {
+        display: none;
+    }
+}

@@ -344,7 +344,8 @@ section, header, footer {
 
 .section-block {
     width: 100%;
-    padding: var(--space-2xl) 32px;
+    padding: clamp(48px, 6vh, 96px) 32px;
+    scroll-margin-top: calc(var(--header-height) + 16px);
     border-top: 1px solid var(--border-color);
 }
 
@@ -361,6 +362,7 @@ section, header, footer {
     max-width: var(--max-width);
     margin: 0 auto;
     width: 100%;
+    padding-bottom: 40px;
 }
 
 .section-eyebrow-row {
@@ -1647,4 +1649,33 @@ span.slow-reveal-line {
 
 .hero-3d-col canvas {
   overflow: visible !important;
+}
+
+/* ----------------- MACBOOK / LAPTOP RESPONSIVE (Max Height 900px) ----------------- */
+@media screen and (min-width: 1024px) and (max-height: 900px) {
+    .section-block {
+        padding-top: 48px;
+        padding-bottom: 48px;
+    }
+
+    /* Layout 2 cột cho Experience trên MacBook */
+    .experience-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px 48px;
+    }
+
+    .exp-desc-text {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .about-main-title {
+        font-size: clamp(28px, 3.2vw, 42px);
+    }
+
+    .about-paragraph {
+        font-size: 16px;
+        line-height: 1.5;
+    }
 }

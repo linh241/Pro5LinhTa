@@ -4,6 +4,7 @@ import { Observer } from 'gsap/Observer';
 import { useGSAP } from '@gsap/react';
 
 import { Cloth } from './components/canvasui/Cloth';
+import { FlagInstructionModal } from './components/canvasui/FlagInstructionModal';
 import { AudioPlayer } from './components/AudioPlayer/AudioPlayer';
 import { DitheredObject } from './components/canvasui/DitheredObject';
 import type { DitheredObjectOptions } from './components/canvasui/DitheredObject';
@@ -250,6 +251,8 @@ function AppClone() {
 
   return (
     <div ref={appRef} className="app-container">
+      <FlagInstructionModal />
+      
       {/* Audio Player Toggle for Interstellar Theme */}
       <AudioPlayer />
 

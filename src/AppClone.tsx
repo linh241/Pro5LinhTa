@@ -18,7 +18,7 @@ const SECTIONS_CONFIG = [
   { id: 'hero', name: 'Home', type: 'vertical' as const },
   { id: 'work', name: 'Work', type: 'horizontal' as const, panels: 5 }, // intro + 4 projects
   { id: 'process', name: 'Process', type: 'vertical' as const },
-  { id: 'experience', name: 'Experience', type: 'vertical' as const },
+  { id: 'experience', name: 'Experience', type: 'horizontal' as const, panels: 6 },
   { id: 'about', name: 'About', type: 'vertical' as const },
   { id: 'contact', name: 'Contact', type: 'vertical' as const },
 ];
@@ -94,42 +94,66 @@ function AppClone() {
     }
 
     function animateToPanel(wrapper: HTMLElement, panelIdx: number, dir: number) {
-      const targetX = -panelIdx * window.innerWidth;
+      const isExperiencePanel = wrapper.closest('#experience') !== null;
+      const isMobile = window.innerWidth <= 500;
+      const panelWidth = (isExperiencePanel && !isMobile) ? window.innerWidth / 2 : window.innerWidth;
+      
+      let targetX = -panelIdx * panelWidth;
+      const maxScroll = -(wrapper.scrollWidth - window.innerWidth);
+      if (targetX < maxScroll && maxScroll < 0) targetX = maxScroll;
+
       animating.current = true;
 
       const tl = gsap.timeline({
-        delay: 0.3, // 0.3s delay on scroll as requested
+        delay: 0.3,
         onComplete: () => { animating.current = false; },
       });
 
-      tl.to(wrapper, {
-        x: targetX,
-        duration: 1.2,
-        ease: 'power3.inOut',
-      }, 0);
+      tl.to(wrapper, { x: targetX, duration: 1.2, ease: 'power3.inOut' }, 0);
 
-      // Animate content inside landing panel
       const panels = wrapper.querySelectorAll<HTMLElement>('.horizontal-panel');
-      const activePanel = panels[panelIdx];
+      const visiblePanels = (isExperiencePanel && !isMobile) ? 2 : 1;
+      const activeIdx = dir > 0 ? Math.min(panelIdx + visiblePanels - 1, panels.length - 1) : panelIdx;
+      const activePanel = panels[activeIdx];
       if (!activePanel) return;
 
-      const lines = activePanel.querySelectorAll<HTMLElement>('.line-reveal, .slow-reveal-line, .h-project-meta > *');
-      if (lines.length) {
-        tl.fromTo(
-          lines,
-          { opacity: 0, y: dir > 0 ? 35 : -35, filter: 'blur(8px)' },
-          { opacity: 1, y: 0, filter: 'blur(0px)', stagger: 0.12, duration: 1.2, ease: 'power2.inOut' },
-          0.35
-        );
-      }
-
-      const imgEl = activePanel.querySelector<HTMLElement>('.h-project-img');
-      if (imgEl) {
-        tl.fromTo(imgEl,
-          { scale: 1.08, opacity: 0 },
-          { scale: 1, opacity: 1, duration: 1.3, ease: 'power2.inOut' },
-          0.05
-        );
+      if (isExperiencePanel) {
+        // Timeline dot pops in first
+        const dot = activePanel.querySelector<HTMLElement>('.tl-dot');
+        if (dot) {
+          tl.fromTo(dot,
+            { scale: 0, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(2.5)' },
+            0.3
+          );
+        }
+        // Then title, company, desc fade up
+        const texts = activePanel.querySelectorAll<HTMLElement>('.tl-title, .tl-company, .tl-desc, .tl-period');
+        if (texts.length) {
+          tl.fromTo(texts,
+            { opacity: 0, y: dir > 0 ? 24 : -24, filter: 'blur(6px)' },
+            { opacity: 1, y: 0, filter: 'blur(0px)', stagger: 0.1, duration: 1.0, ease: 'power2.out' },
+            0.55
+          );
+        }
+      } else {
+        // Work panels
+        const lines = activePanel.querySelectorAll<HTMLElement>('.line-reveal, .slow-reveal-line, .h-project-meta > *');
+        if (lines.length) {
+          tl.fromTo(lines,
+            { opacity: 0, y: dir > 0 ? 35 : -35, filter: 'blur(8px)' },
+            { opacity: 1, y: 0, filter: 'blur(0px)', stagger: 0.12, duration: 1.2, ease: 'power2.inOut' },
+            0.35
+          );
+        }
+        const imgEl = activePanel.querySelector<HTMLElement>('.h-project-img');
+        if (imgEl) {
+          tl.fromTo(imgEl,
+            { scale: 1.08, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 1.3, ease: 'power2.inOut' },
+            0.05
+          );
+        }
       }
     }
 
@@ -151,7 +175,15 @@ function AppClone() {
       const config = SECTIONS_CONFIG[nextSectionIdx];
       if (config?.type === 'horizontal') {
         const wrapper = getWrapper(nextSec);
-        if (wrapper) gsap.set(wrapper, { x: -entryPanelIdx * window.innerWidth });
+        if (wrapper) {
+          const isExperience = nextSec.id === 'experience';
+          const isMobile = window.innerWidth <= 500;
+          const panelWidth = (isExperience && !isMobile) ? window.innerWidth / 2 : window.innerWidth;
+          let startX = -entryPanelIdx * panelWidth;
+          const maxScroll = -(wrapper.scrollWidth - window.innerWidth);
+          if (startX < maxScroll && maxScroll < 0) startX = maxScroll;
+          gsap.set(wrapper, { x: startX });
+        }
         panelIndex.current = entryPanelIdx;
       }
 
@@ -194,8 +226,13 @@ function AppClone() {
         const cfg = SECTIONS_CONFIG[sectionIndex.current];
 
         if (cfg?.type === 'horizontal') {
-          const totalPanels = cfg.panels;
-          if (panelIndex.current < totalPanels - 1) {
+          const isExperience = sections[sectionIndex.current].id === 'experience';
+          const isMobile = window.innerWidth <= 500;
+          const visiblePanels = (isExperience && !isMobile) ? 2 : 1;
+          const totalPanels = cfg.panels ?? 0;
+          const maxPanelIdx = totalPanels - visiblePanels;
+          
+          if (panelIndex.current < maxPanelIdx) {
             const nextPanel = panelIndex.current + 1;
             panelIndex.current = nextPanel;
             const wrapper = getWrapper(sections[sectionIndex.current]);
@@ -223,7 +260,13 @@ function AppClone() {
           }
         } else {
           const prevCfg = SECTIONS_CONFIG[sectionIndex.current - 1];
-          const entryPanel = prevCfg?.type === 'horizontal' ? (prevCfg.panels - 1) : 0;
+          let entryPanel = 0;
+          if (prevCfg?.type === 'horizontal') {
+            const isExperience = sections[sectionIndex.current - 1]?.id === 'experience';
+            const isMobile = window.innerWidth <= 500;
+            const visiblePanels = (isExperience && !isMobile) ? 2 : 1;
+            entryPanel = (prevCfg.panels ?? 1) - visiblePanels;
+          }
           gotoSection(sectionIndex.current - 1, -1, entryPanel);
         }
       },
@@ -521,90 +564,68 @@ function AppClone() {
             </div>
           </section>
 
-          {/* ─── 4. EXPERIENCE (Complete 7 Entries) ──────────── */}
+          {/* ─── 4. EXPERIENCE (Horizontal Timeline) ──────────── */}
           <section className="fullpage-section section-block section-experience" id="experience">
-            <div className="container-inner" style={{ paddingTop: '100px', height: '100%', overflowY: 'auto', paddingBottom: '100px' }}>
-              <div className="split-section-grid">
-                {/* Left Col: Header & Description */}
-                <div className="split-left-col">
-                  <div className="section-eyebrow-row">
-                    <span className="section-label">03 / EXPERIENCE</span>
-                  </div>
-                  <h2 className="section-heading-large line-reveal">
-                    Experience
-                  </h2>
-                  <p className="section-desc-p line-reveal">
-                    A track record of designing complex digital systems across AI, healthcare, legal technology, and enterprise software.
-                  </p>
-                </div>
+            {/* Fixed top header */}
+            <div className="exp-timeline-header">
+              <span className="section-label">03 / EXPERIENCE</span>
+              <h2 className="exp-timeline-title line-reveal">Experience</h2>
+            </div>
 
-                {/* Right Col: Full Experience Entries Table */}
-                <div className="split-right-col">
-                  <div className="experience-list">
-                    <div className="experience-entry line-reveal">
-                      <span className="exp-period">2025—Present</span>
-                      <div className="exp-role-group">
-                        <h3 className="exp-role-title">Founder &amp; Product Designer</h3>
-                        <span className="exp-company-name">Devxin • Hanoi</span>
-                      </div>
-                      <p className="exp-desc-text">Building and researching AI-enabled products, defining end-to-end user journeys, and creating production-ready design systems.</p>
-                    </div>
+            {/* Horizontal scroll wrapper */}
+            <div className="horizontal-wrapper exp-timeline-wrapper">
+              {/* Panel 0 — Devxin */}
+              <div className="horizontal-panel exp-timeline-panel">
+                <div className="tl-dot line-reveal" />
+                <span className="tl-period line-reveal">2025 — Present</span>
+                <h3 className="tl-title line-reveal">Founder &amp; Product Designer</h3>
+                <span className="tl-company line-reveal">Devxin • Hanoi</span>
+                <p className="tl-desc line-reveal">Building and researching AI-enabled products, defining end-to-end user journeys, and creating production-ready design systems.</p>
+              </div>
 
-                    <div className="experience-entry line-reveal">
-                      <span className="exp-period">2024—Present</span>
-                      <div className="exp-role-group">
-                        <h3 className="exp-role-title">Product Designer</h3>
-                        <span className="exp-company-name">LuatVietnam (CTC Tech) • Hanoi</span>
-                      </div>
-                      <p className="exp-desc-text">Improving legal-information products through user behaviour analytics, UX restructuring, and modular interaction patterns (Awarded 3rd Innovation Prize).</p>
-                    </div>
+              {/* Panel 1 — LuatVietnam */}
+              <div className="horizontal-panel exp-timeline-panel">
+                <div className="tl-dot line-reveal" />
+                <span className="tl-period line-reveal">2024 — Present</span>
+                <h3 className="tl-title line-reveal">Product Designer</h3>
+                <span className="tl-company line-reveal">LuatVietnam (CTC Tech) • Hanoi</span>
+                <p className="tl-desc line-reveal">Improving legal-information products through user behaviour analytics, UX restructuring, and modular interaction patterns (Awarded 3rd Innovation Prize).</p>
+              </div>
 
-                    <div className="experience-entry line-reveal">
-                      <span className="exp-period">2024—Present</span>
-                      <div className="exp-role-group">
-                        <h3 className="exp-role-title">UX/UI Designer</h3>
-                        <span className="exp-company-name">HIVO • Perth, Australia (Remote)</span>
-                      </div>
-                      <p className="exp-desc-text">Designing workflows and design systems for an enterprise Digital Asset Management platform used across multi-tier organizational permission models.</p>
-                    </div>
+              {/* Panel 2 — HIVO */}
+              <div className="horizontal-panel exp-timeline-panel">
+                <div className="tl-dot line-reveal" />
+                <span className="tl-period line-reveal">2024 — Present</span>
+                <h3 className="tl-title line-reveal">UX/UI Designer</h3>
+                <span className="tl-company line-reveal">HIVO • Perth, Australia (Remote)</span>
+                <p className="tl-desc line-reveal">Designing workflows and design systems for an enterprise Digital Asset Management platform used across multi-tier organizational permission models.</p>
+              </div>
 
-                    <div className="experience-entry line-reveal">
-                      <span className="exp-period">2022—Present</span>
-                      <div className="exp-role-group">
-                        <h3 className="exp-role-title">Independent UX/UI Designer</h3>
-                        <span className="exp-company-name">Freelance • International Clients</span>
-                      </div>
-                      <p className="exp-desc-text">Product and interface work across healthcare, enterprise, and recruitment platforms (TopCV SRP, Ecospace/Hitachi emissions management, Airzai Dubai, HODO).</p>
-                    </div>
+              {/* Panel 3 — Freelance */}
+              <div className="horizontal-panel exp-timeline-panel">
+                <div className="tl-dot line-reveal" />
+                <span className="tl-period line-reveal">2022 — Present</span>
+                <h3 className="tl-title line-reveal">Independent UX/UI Designer</h3>
+                <span className="tl-company line-reveal">Freelance • International Clients</span>
+                <p className="tl-desc line-reveal">Product and interface work across healthcare, enterprise, and recruitment platforms (TopCV SRP, Ecospace/Hitachi emissions management, Airzai Dubai, HODO).</p>
+              </div>
 
-                    <div className="experience-entry line-reveal">
-                      <span className="exp-period">2021—2022</span>
-                      <div className="exp-role-group">
-                        <h3 className="exp-role-title">Product Design &amp; UX/UI Leader</h3>
-                        <span className="exp-company-name">Savis Technology Group • Hanoi</span>
-                      </div>
-                      <p className="exp-desc-text">Led a design team of 5 delivering portal, OCR, eKYC, and digital signature platforms for government and enterprise clients (Ministry of Health, VTV).</p>
-                    </div>
+              {/* Panel 4 — Savis */}
+              <div className="horizontal-panel exp-timeline-panel">
+                <div className="tl-dot line-reveal" />
+                <span className="tl-period line-reveal">2021 — 2022</span>
+                <h3 className="tl-title line-reveal">Product Design &amp; UX/UI Leader</h3>
+                <span className="tl-company line-reveal">Savis Technology Group • Hanoi</span>
+                <p className="tl-desc line-reveal">Led a design team of 5 delivering portal, OCR, eKYC, and digital signature platforms for government and enterprise clients (Ministry of Health, VTV).</p>
+              </div>
 
-                    <div className="experience-entry line-reveal">
-                      <span className="exp-period">2017—2021</span>
-                      <div className="exp-role-group">
-                        <h3 className="exp-role-title">Graphic &amp; UI Design</h3>
-                        <span className="exp-company-name">Earlier Roles • Hanoi</span>
-                      </div>
-                      <p className="exp-desc-text">Visual design, marketing campaigns, and foundational digital interfaces for retail and corporate organizations.</p>
-                    </div>
-
-                    <div className="experience-entry line-reveal">
-                      <span className="exp-period">Dec 2023</span>
-                      <div className="exp-role-group">
-                        <h3 className="exp-role-title">B.Eng. in Automotive Engineering</h3>
-                        <span className="exp-company-name">Hanoi University of Science and Technology (HUST)</span>
-                      </div>
-                      <p className="exp-desc-text">Formal engineering training in complex physical architectures and mechanical systems that directly grounds my systems-first design philosophy.</p>
-                    </div>
-                  </div>
-                </div>
+              {/* Panel 5 — Earlier Roles */}
+              <div className="horizontal-panel exp-timeline-panel">
+                <div className="tl-dot line-reveal" />
+                <span className="tl-period line-reveal">2017 — 2021</span>
+                <h3 className="tl-title line-reveal">Graphic &amp; UI Design</h3>
+                <span className="tl-company line-reveal">Earlier Roles • Hanoi</span>
+                <p className="tl-desc line-reveal">Visual design, marketing campaigns, and foundational digital interfaces for retail and corporate organizations.</p>
               </div>
             </div>
           </section>
@@ -694,9 +715,10 @@ function AppClone() {
                   </div>
                 </div>
               </div>
-              <footer className="site-footer" style={{ marginTop: '120px', borderTop: '1px solid var(--border-color)', paddingTop: '32px' }}>
-                <div className="footer-inner-container">
+              <footer className="site-footer" style={{ borderTop: '1px solid var(--border-color)', padding: '32px 0 32px 0', marginTop: 'auto' }}>
+                <div className="footer-inner-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'space-between', alignItems: 'center', width: '100%', fontSize: '13px' }}>
                   <span>LINH TA — PRODUCT DESIGNER &amp; FOUNDER • HANOI, VIETNAM • © 2026</span>
+                  <span style={{ opacity: 0.5 }}>Created by LinhTa</span>
                 </div>
               </footer>
             </div>

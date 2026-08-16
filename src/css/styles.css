@@ -48,15 +48,15 @@
 }
 
 [data-theme="dark"] {
-    --bg-main: #121314;
-    --bg-surface: #1C1D1F;
-    --bg-placeholder: #2A2C2E;
-    --bg-placeholder-alt: #383A3D;
+    --bg-main: #242424;
+    --bg-surface: #2E2E2E;
+    --bg-placeholder: #383838;
+    --bg-placeholder-alt: #424242;
 
     --text-primary: #FAF9F6;
-    --text-secondary: #A0A5AA;
-    --text-muted: #606468;
-    --text-inverse: #121314;
+    --text-secondary: #B0B5BA;
+    --text-muted: #7E8388;
+    --text-inverse: #242424;
 
     --border-color: rgba(250, 249, 246, 0.14);
     --border-subtle: rgba(250, 249, 246, 0.07);

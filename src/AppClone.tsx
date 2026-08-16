@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { Observer } from 'gsap/Observer';
 import { useGSAP } from '@gsap/react';
@@ -9,6 +9,8 @@ import { AudioPlayer } from './components/AudioPlayer/AudioPlayer';
 import { DitheredObject } from './components/canvasui/DitheredObject';
 import type { DitheredObjectOptions } from './components/canvasui/DitheredObject';
 import { assetPath } from './lib/assetPath';
+import { PullCord } from 'pullcord';
+import 'pullcord/pullcord.css';
 import './css/styles.css';
 
 gsap.registerPlugin(Observer, useGSAP);
@@ -25,8 +27,9 @@ const SECTIONS_CONFIG = [
 
 function AppClone() {
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  const [ditherOptions] = useState<Required<DitheredObjectOptions>>({
+  const [ditherOptions, setDitherOptions] = useState<Required<DitheredObjectOptions>>({
     src: assetPath('the_hand.glb'),
     method: 'halftone',
     gridSize: 1,
@@ -57,6 +60,15 @@ function AppClone() {
     onLoad: null,
     onError: null,
   });
+
+  // Sync dark mode state with HTML data-theme attribute
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+    setDitherOptions(prev => ({
+      ...prev,
+      highlight: isDarkMode ? '#FFFFFF' : '#000000'
+    }));
+  }, [isDarkMode]);
 
   const appRef = useRef<HTMLDivElement>(null);
 
@@ -293,7 +305,7 @@ function AppClone() {
   };
 
   return (
-    <div ref={appRef} className="app-container">
+    <div ref={appRef} className="portfolio-app-root">
       <FlagInstructionModal />
       
       {/* Audio Player Toggle for Interstellar Theme */}
@@ -306,9 +318,13 @@ function AppClone() {
           onClick={() => handleNavClick(0)}
           className="brand-link-fixed"
           aria-label="Linh Ta — Home"
-          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', color: 'var(--text-primary)' }}
         >
-          <img src={assetPath('logo.svg?v=2')} alt="Linh Ta Logo" style={{ height: '24px', width: 'auto', display: 'block' }} />
+          <svg width="81" height="24" viewBox="0 0 81 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ height: '24px', width: 'auto', display: 'block' }}>
+            <rect width="8" height="8" transform="translate(0 10.5)" fill="#F47F5F" />
+            <rect width="4" height="4" transform="translate(9 5.5)" fill="#F47F5F" />
+            <path d="M21.5122 18V6.72656H23.8403V16.0781H28.8716V18H21.5122ZM30.2197 18V6.72656H32.5478V18H30.2197ZM34.5053 18V6.72656H36.4584L42.2866 14.7812L40.6537 13.9609H41.8178V6.72656H44.0444V18H42.1069L36.2709 9.91406L37.8959 10.7344H36.7397V18H34.5053ZM45.9941 18V6.72656H48.3222V11.3125H53.4394V6.72656H55.7675V18H53.4394V13.2344H48.3222V18H45.9941ZM63.8075 18V8.64844H60.4169V6.72656H69.5262V8.64844H66.1356V18H63.8075ZM68.7884 18L72.7181 6.72656H74.6947V8.96875H74.015L71.2416 18H68.7884ZM70.8822 15.25L71.4525 13.5H76.6634L77.2337 15.25H70.8822ZM76.9212 18L74.1478 8.96875V6.72656H75.4447L79.3744 18H76.9212Z" fill="currentColor" />
+          </svg>
         </button>
 
         {/* Far-right Vertical Nav Menu */}
@@ -349,6 +365,13 @@ function AppClone() {
         backing="auto"
         style={{ width: '100%', height: '100vh', position: 'fixed', top: 0, left: 0 }}
       >
+        <PullCord 
+          onPull={() => setIsDarkMode(prev => !prev)} 
+          pulled={isDarkMode} 
+          className="theme-pullcord" 
+          ariaLabel="Toggle Dark Mode"
+        />
+
         <div className="fullpage-container">
 
           {/* ─── 1. HERO ────────────────────────────────────────── */}

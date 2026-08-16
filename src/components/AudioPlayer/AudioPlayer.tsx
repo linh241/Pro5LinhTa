@@ -85,23 +85,23 @@ export function AudioPlayer() {
 
       <button
         onClick={toggleAudio}
-        aria-label={isPlaying ? 'Pause Interstellar Theme' : 'Play Interstellar Theme'}
+        aria-label={isPlaying ? 'Pause Theme Audio' : 'Play Theme Audio'}
         className={`audio-toggle-btn ${isPlaying ? 'is-playing' : ''}`}
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '10px',
-          backgroundColor: 'rgba(250, 249, 246, 0.9)',
-          color: 'var(--text-primary, #111)',
-          border: '1px solid rgba(0, 0, 0, 0.15)',
+          gap: '8px',
+          backgroundColor: 'var(--bg-surface)',
+          color: 'var(--text-primary)',
+          border: '1px solid var(--border-color)',
           borderRadius: '24px',
-          padding: '8px 16px',
+          padding: '8px 14px',
           fontFamily: "var(--font-mono, 'JetBrains Mono', monospace)",
           fontSize: '11px',
           letterSpacing: '0.08em',
           cursor: 'pointer',
           backdropFilter: 'blur(12px)',
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.08)',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
           transition: 'all 0.3s ease',
         }}
       >
@@ -112,7 +112,7 @@ export function AudioPlayer() {
           <span className="eq-bar bar-3" style={{ width: '2px', height: isPlaying ? '10px' : '3px', backgroundColor: 'currentColor', transition: 'height 0.3s' }} />
         </span>
 
-        <span>{isPlaying ? 'SOUND: ON (INTERSTELLAR)' : 'SOUND: OFF (INTERSTELLAR)'}</span>
+        <span>{isPlaying ? 'SOUND: ON' : 'SOUND: OFF'}</span>
       </button>
     </div>
   );
